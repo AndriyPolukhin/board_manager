@@ -2,7 +2,7 @@ import prisma from '@/app/utils/connect'
 import { auth } from '@clerk/nextjs'
 import { NextResponse } from 'next/server'
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
 	try {
 		const { userId } = auth()
 
@@ -44,11 +44,12 @@ export async function POST(req: Request) {
 	}
 }
 
-export async function GET(req: Request) {
+export const GET = async (req: Request) => {
 	try {
 		const { userId } = auth()
+
 		if (!userId) {
-			return NextResponse.json({ error: 'unauthorized', status: 401 })
+			return NextResponse.json({ error: 'Unauthorized', status: 401 })
 		}
 
 		const tasks = await prisma.task.findMany({
@@ -57,7 +58,6 @@ export async function GET(req: Request) {
 			},
 		})
 
-		console.log('TASKS: ', tasks)
 		return NextResponse.json(tasks)
 	} catch (error) {
 		console.log(`Error getting task: `, error)
@@ -65,18 +65,27 @@ export async function GET(req: Request) {
 	}
 }
 
-export async function PUT(req: Request) {
+export const PUT = async (req: Request) => {
 	try {
+		const { userId } = auth()
+		const { isCompleted, id } = await req.json()
+
+		if (!userId) {
+			return NextResponse.json({ error: 'Unauthorized', status: 401 })
+		}
+
+		const task = await prisma.task.update({
+			where: {
+				id,
+			},
+			data: {
+				isCompleted,
+			},
+		})
+
+		return NextResponse.json(task)
 	} catch (error) {
 		console.log(`Error updating task: `, error)
 		return NextResponse.json({ error: 'Error updating a task', status: 500 })
-	}
-}
-
-export async function DELETE(req: Request) {
-	try {
-	} catch (error) {
-		console.log(`Error deleting task: `, error)
-		return NextResponse.json({ error: 'Error deleting a task', status: 500 })
 	}
 }

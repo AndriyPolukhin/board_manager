@@ -4,7 +4,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import styled from 'styled-components'
-import { add, plus } from '@/app/utils/Icons'
+import { add } from '@/app/utils/Icons'
+import Button from '../Button/Button'
 
 const CreateContent = () => {
 	const [title, setTitle] = useState('')
@@ -13,7 +14,7 @@ const CreateContent = () => {
 	const [completed, setCompleted] = useState(false)
 	const [important, setImportant] = useState(false)
 
-	const { theme } = useGlobalState()
+	const { theme, allTasks, closeModal } = useGlobalState()
 	const handleChange = (name: string) => (e: any) => {
 		switch (name) {
 			case 'title':
@@ -56,9 +57,11 @@ const CreateContent = () => {
 
 			if (!res.data.error) {
 				toast.success('Task created successfully.')
+				allTasks()
+				closeModal()
 			}
 		} catch (error) {
-			toast.error('Something went wrong.')
+			toast.error('Something went wrong while adding a new task.')
 			console.log(error)
 		}
 	}
@@ -70,9 +73,9 @@ const CreateContent = () => {
 				<label htmlFor='title'>Title</label>
 				<input
 					type='text'
-					name='title'
 					id='title'
 					value={title}
+					name='title'
 					onChange={handleChange('title')}
 					placeholder='e.g, Watch a video from Fireship.'
 				/>
@@ -120,17 +123,23 @@ const CreateContent = () => {
 			</div>
 
 			<div className='submit-btn flex justify-end'>
-				<button type='submit'>
-					<span>Submit</span>
-				</button>
+				<Button
+					type='submit'
+					name='Create Task'
+					icon={add}
+					padding={'0.8rem 2rem'}
+					borderRad={'0.8rem'}
+					fw={'500'}
+					fs={'1.2rem'}
+					background={'rgb(0, 163, 255)'}
+				/>
 			</div>
 		</CreateContentStyled>
 	)
 }
-
 const CreateContentStyled = styled.form`
 	> h1 {
-		font-size: clamp(1.2rem, 1.6rem);
+		font-size: clamp(1.2rem, 5vw, 1.6rem);
 		font-weight: 600;
 	}
 
@@ -151,7 +160,7 @@ const CreateContentStyled = styled.form`
 			font-size: clamp(0.9rem, 5vw, 1.2rem);
 
 			span {
-				color: ${(props) => props.theme.colorGray3};
+				color: ${(props) => props.theme.colorGrey3};
 			}
 		}
 
@@ -159,8 +168,8 @@ const CreateContentStyled = styled.form`
 		textarea {
 			width: 100%;
 			padding: 1rem;
-			resize: none;
 
+			resize: none;
 			background-color: ${(props) => props.theme.colorGreyDark};
 			color: ${(props) => props.theme.colorGrey2};
 			border-radius: 0.5rem;

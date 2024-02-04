@@ -11,7 +11,7 @@ import Button from '../Button/Button'
 import { arrowLeft, bars, logout } from '@/app/utils/Icons'
 import { UserButton, useClerk, useUser } from '@clerk/nextjs'
 
-function Sidebar() {
+const Sidebar = () => {
 	const { theme, collapsed, collapseMenu } = useGlobalState()
 	const { signOut } = useClerk()
 	const { user } = useUser()
@@ -40,7 +40,7 @@ function Sidebar() {
 					<Image
 						width={70}
 						height={70}
-						src='/avatar1.png'
+						src={'/avatar1.png'}
 						alt='profile'
 						priority
 					/>
